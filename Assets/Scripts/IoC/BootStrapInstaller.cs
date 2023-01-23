@@ -1,7 +1,7 @@
 using UnityEngine;
 using Zenject;
 
-public class ProjectInstaller : MonoInstaller
+public class BootStrapInstaller : MonoInstaller
 {
     public override void InstallBindings()
     {
