@@ -4,12 +4,17 @@ using Zenject;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField]
-    private float _damage;
+    private float damage;
     [SerializeField]
-    private float _attackDistance;
+    private float attackDistance;
+    [SerializeField]
+    private float attackDelay;
+    [SerializeField]
+    private float health;
 
     private NavMeshAgent _agent;
     private PlayerData _player;
+    private float _attackTimer;
 
     [Inject]
     public void Construct(PlayerData player)
@@ -19,9 +24,45 @@ public class EnemyController : MonoBehaviour
 
     private bool CanAttack()
     {
-        if (Vector3.Distance(transform.position, _player.Transform.position) <= _attackDistance) return true;
-        else
-            return false;
+        if (_attackTimer >= attackDelay && _player.IsAlive)
+        {
+            if (Vector3.Distance(transform.position, _player.Transform.position) <= attackDistance)
+            {
+                _attackTimer = 0;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void MoveToTarget(PlayerData _player)
+    {
+        if (_agent.destination != _player.Transform.position)
+        {
+            _agent.SetDestination(_player.Transform.position);
+        }
+    }
+
+    private bool ThereIsATarget()
+    {
+        if (_player != null)
+            return true;
+        return false;
+    }
+
+    public void TakeDamage(float value)
+    {
+        health -= value;
+        TryToKill();
+    }
+
+    private void TryToKill()
+    {
+        if (health <= 0)
+        {
+            Debug.Log("Enemy killed");
+            Destroy(gameObject);
+        }
     }
 
     private void Awake()
@@ -29,22 +70,18 @@ public class EnemyController : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
     }
 
-    private void Start()
+    private void Update()
     {
-        _agent.destination = _player.Transform.position;
+        _attackTimer += Time.deltaTime;
     }
 
     private void FixedUpdate()
     {
-        if (CanAttack())
+        if (ThereIsATarget())
         {
-            _agent.isStopped = true;
-            if (_player.IsAlive)
-                _player.TakeDamage(_damage);
-        }
-        else
-        {
-            _agent.isStopped = false;
+            MoveToTarget(_player);
+            if (CanAttack())
+                _player.TakeDamage(damage);
         }
     }
 

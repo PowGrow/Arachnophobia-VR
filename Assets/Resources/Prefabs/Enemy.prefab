@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8814730836562156528}
   - component: {fileID: 2201038031199004436}
   - component: {fileID: 4284884519387206442}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -134,5 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9c907c05c13b3d408055cecad699ff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 1
-  _attackDistance: 2
+  damage: 5
+  attackDistance: 1.5
+  attackDelay: 2
+  health: 20

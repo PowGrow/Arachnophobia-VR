@@ -4,7 +4,7 @@ using Zenject;
 public class PlayerData : MonoBehaviour
 {
     [SerializeField]
-    private float _maxHealth;
+    private float maxHealth;
     public Transform Transform { get; private set; }
     public bool IsAlive { get; private set; } = true;
     public float Health { get; private set; }
@@ -12,7 +12,7 @@ public class PlayerData : MonoBehaviour
     private void Awake()
     {
         Transform = transform;
-        Health = _maxHealth;
+        Health = maxHealth;
     }
 
     public void TakeDamage(float value)
