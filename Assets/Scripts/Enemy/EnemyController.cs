@@ -50,21 +50,6 @@ public class EnemyController : MonoBehaviour
         return false;
     }
 
-    public void TakeDamage(float value)
-    {
-        health -= value;
-        TryToKill();
-    }
-
-    private void TryToKill()
-    {
-        if (health <= 0)
-        {
-            Debug.Log("Enemy killed");
-            Destroy(gameObject);
-        }
-    }
-
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();

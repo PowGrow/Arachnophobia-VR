@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 8814730836562156528}
   - component: {fileID: 2201038031199004436}
   - component: {fileID: 4284884519387206442}
+  - component: {fileID: 623333628637383329}
+  - component: {fileID: 1915401932067141636}
   m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
@@ -138,3 +140,38 @@ MonoBehaviour:
   attackDistance: 1.5
   attackDelay: 2
   health: 20
+--- !u!114 &623333628637383329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8361882917447344715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2fba50691c4c804ea3f345eb904cc95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Life: 20
+  Damageable: 1
+  Desctructible: {fileID: 0}
+--- !u!114 &1915401932067141636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8361882917447344715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66f0a0ab295247a681b1b569944a2bf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DestroyedVersion: {fileID: 8361882917447344715, guid: 4809ffeac45aed845b369c1029e31ef8, type: 3}
+  ExplosionRadius: 0.1
+  ExplosionPower: 0.5
+  ExplosionUpwardsPower: 0.2
+  RemoveDebris: 1
+  RemoveDebrisTimerUpper: 10
+  RemoveDebrisTimerLower: 5
+  IgnorePlayerCollision: 1

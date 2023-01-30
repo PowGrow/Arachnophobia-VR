@@ -316,7 +316,7 @@ MonoBehaviour:
   MuzzleFlashTime: 0.2
   BarrelRange: 10
   RequiresAmmo: 0
-  RequiresChamberedBullet: 1
+  RequiresChamberedBullet: 0
   FireType: 0
   BulletSpeed: 80
   AmmoEjectVelocity: 0
