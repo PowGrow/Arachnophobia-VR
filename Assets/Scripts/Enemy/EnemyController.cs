@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.AI;
 using Zenject;
-public class EnemyController : MonoBehaviour
+using HurricaneVR.Framework.Components;
+
+public class EnemyController : HVRDamageHandlerBase
 {
     [SerializeField]
     private float damage;
@@ -11,10 +13,14 @@ public class EnemyController : MonoBehaviour
     private float attackDelay;
     [SerializeField]
     private float health;
+    [SerializeField]
+    private EnemyUI enemyUi;
+
 
     private NavMeshAgent _agent;
     private PlayerData _player;
     private float _attackTimer;
+    private float _currentHealth;
 
     [Inject]
     public void Construct(PlayerData player)
@@ -50,9 +56,22 @@ public class EnemyController : MonoBehaviour
         return false;
     }
 
+    public override void TakeDamage(float value)
+    {
+        _currentHealth -= value;
+        enemyUi.UpdateUI(_currentHealth, health);
+        if (health <= 0)
+            Destroy(this.gameObject);
+    }
+
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
+    }
+
+    private void Start()
+    {
+        _currentHealth = health;
     }
 
     private void Update()

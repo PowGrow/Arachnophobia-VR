@@ -351,7 +351,7 @@ MonoBehaviour:
   FireParameter: Fire
   MaxPooledBullets: 100
   SlowMotionBulletOnly: 0
-  BulletPrefab: {fileID: 3624388242970295607, guid: 71955c362197dbd468428826b23f2a3d, type: 3}
+  BulletPrefab: {fileID: 7570415639619388451, guid: 416e18e376860fc499add1ebea2501b4, type: 3}
   BulletLife: 5
   Fired:
     m_PersistentCalls:
