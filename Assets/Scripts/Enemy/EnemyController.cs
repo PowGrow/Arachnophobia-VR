@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using Zenject;
 using HurricaneVR.Framework.Components;
+using HurricaneVR.Framework.Core.Player;
+using System;
 
 public class EnemyController : HVRDamageHandlerBase
 {
@@ -22,6 +24,10 @@ public class EnemyController : HVRDamageHandlerBase
     private float _attackTimer;
     private float _currentHealth;
 
+    public Transform PlayerCamera { get; private set; }
+
+    public Action<EnemyController> OnEnemyDieEvent;
+
     [Inject]
     public void Construct(PlayerData player)
     {
@@ -30,13 +36,10 @@ public class EnemyController : HVRDamageHandlerBase
 
     private bool CanAttack()
     {
-        if (_attackTimer >= attackDelay && _player.IsAlive)
+        if (_attackTimer >= attackDelay && _player.IsAlive && Vector3.Distance(transform.position, _player.Transform.position) <= attackDistance)
         {
-            if (Vector3.Distance(transform.position, _player.Transform.position) <= attackDistance)
-            {
-                _attackTimer = 0;
-                return true;
-            }
+            _attackTimer = 0;
+            return true;
         }
         return false;
     }
@@ -47,6 +50,11 @@ public class EnemyController : HVRDamageHandlerBase
         {
             _agent.SetDestination(_player.Transform.position);
         }
+    }
+
+    private void StopMoving()
+    {
+        _agent.SetDestination(transform.position);
     }
 
     private bool ThereIsATarget()
@@ -61,12 +69,19 @@ public class EnemyController : HVRDamageHandlerBase
         _currentHealth -= value;
         enemyUi.UpdateUI(_currentHealth, health);
         if (health <= 0)
-            Destroy(this.gameObject);
+            Die();
+    }
+
+    private void Die()
+    {
+        OnEnemyDieEvent?.Invoke(this);
+        Destroy(gameObject);
     }
 
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
+        PlayerCamera = _player.GetComponent<HVRPlayerController>().Camera;
     }
 
     private void Start()
@@ -83,9 +98,15 @@ public class EnemyController : HVRDamageHandlerBase
     {
         if (ThereIsATarget())
         {
-            MoveToTarget(_player);
             if (CanAttack())
+            {
+                StopMoving();
                 _player.TakeDamage(damage);
+            }
+            else
+            {
+                MoveToTarget(_player);
+            }
         }
     }
 

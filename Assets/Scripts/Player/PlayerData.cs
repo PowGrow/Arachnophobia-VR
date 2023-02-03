@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 public class PlayerData : MonoBehaviour
@@ -8,6 +9,8 @@ public class PlayerData : MonoBehaviour
     public Transform Transform { get; private set; }
     public bool IsAlive { get; private set; } = true;
     public float Health { get; private set; }
+
+    private const string START_SCENE = "StartScene";
 
     private void Awake()
     {
@@ -20,9 +23,14 @@ public class PlayerData : MonoBehaviour
         Health -= value;
         if(Health <= 0)
         {
-            Health = 0;
-            IsAlive = false;
-            Debug.Log("Player are dead!");
+            Die();
         }
+    }
+
+    private void Die()
+    {
+        Health = 0;
+        IsAlive = false;
+        SceneManager.LoadScene(START_SCENE);
     }
 }
