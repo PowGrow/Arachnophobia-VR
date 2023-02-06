@@ -77,3 +77,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2798a1a620d97bb489a931713e354c5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 7672478116835658939, guid: 86289f3e0e6a8024c80df8c9955c88a7, type: 3}
+  startPosition: {fileID: 4485123268623746456, guid: e34add25c1a196b4da29280238346e68, type: 3}
+  pistolPrefab: {fileID: 189006933690874449, guid: d67bc7aa67f807542a7f02353294c008, type: 3}
+  spawnPointsPrefab: {fileID: 1607185556056377988, guid: 243f96355a1dc164fa643b0d8e8bf15a, type: 3}
+  enemySpawnerPrefab: {fileID: 365355641861945623, guid: ffea2685ab1e01e458a655b1cf5569d7, type: 3}
+  gameUiPrefab: {fileID: 3632718417684459756, guid: 18a1da1b457f8ca49908f6119c4ffd65, type: 3}
+  pistolPosition: {fileID: 0}

@@ -4,9 +4,12 @@ using Zenject;
 using HurricaneVR.Framework.Components;
 using HurricaneVR.Framework.Core.Player;
 using System;
+using System.Collections;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyController : HVRDamageHandlerBase
 {
+    [Header("Settings")]
     [SerializeField]
     private float damage;
     [SerializeField]
@@ -18,15 +21,30 @@ public class EnemyController : HVRDamageHandlerBase
     [SerializeField]
     private EnemyUI enemyUi;
 
+    private IAnimationDataProvider _enemyAnimationDataProvider;
+    private ISoundProvider _enemySoundProvider;
+
 
     private NavMeshAgent _agent;
+    private NavMeshObstacle _agentObstacle;
     private PlayerData _player;
     private float _attackTimer;
     private float _currentHealth;
 
+    private const int DIE = 3;
+    private const int ATTACK = 2;
+    private const int WALK = 1;
+    private const int IDLE = 0;
+
     public Transform PlayerCamera { get; private set; }
 
-    public Action<EnemyController> OnEnemyDieEvent;
+    public event Action<EnemyController> OnEnemyDieEvent;
+
+    [ContextMenu("Kill")]
+    public void Kill()
+    {
+        StartCoroutine(Die());
+    }
 
     [Inject]
     public void Construct(PlayerData player)
@@ -36,7 +54,8 @@ public class EnemyController : HVRDamageHandlerBase
 
     private bool CanAttack()
     {
-        if (_attackTimer >= attackDelay && _player.IsAlive && Vector3.Distance(transform.position, _player.Transform.position) <= attackDistance)
+        var distance = Vector3.Distance(transform.position, _player.Transform.position);
+        if (_attackTimer >= attackDelay && _player.IsAlive &&  distance <= attackDistance)
         {
             _attackTimer = 0;
             return true;
@@ -44,11 +63,14 @@ public class EnemyController : HVRDamageHandlerBase
         return false;
     }
 
-    private void MoveToTarget(PlayerData _player)
+    private void MoveToTarget(PlayerData player)
     {
-        if (_agent.destination != _player.Transform.position)
+        if (player != null)
         {
-            _agent.SetDestination(_player.Transform.position);
+            if (_agent.destination != player.Transform.position)
+            {
+                _agent.SetDestination(player.Transform.position);
+            }
         }
     }
 
@@ -69,17 +91,52 @@ public class EnemyController : HVRDamageHandlerBase
         _currentHealth -= value;
         enemyUi.UpdateUI(_currentHealth, health);
         if (health <= 0)
-            Die();
+            StartCoroutine(Die());
     }
 
-    private void Die()
+    private IEnumerator Die()
     {
+        _agent.enabled = false;
+        DoAction(DIE);
+        yield return new WaitForSeconds(3);
         OnEnemyDieEvent?.Invoke(this);
         Destroy(gameObject);
     }
 
+    private void DoAction(int actionId)
+    {
+        if (_enemyAnimationDataProvider != null)
+        {
+            if (actionId == ATTACK)
+                _enemyAnimationDataProvider.IsAttacking = true;
+            else
+                _enemyAnimationDataProvider.IsAttacking = false;
+            if(actionId == DIE)
+            {
+                _enemyAnimationDataProvider.IsAttacking = false;
+                _enemyAnimationDataProvider.IsAlive = false;
+            }
+            //if (actionId == WALK)
+            //{
+            //    _agentObstacle.enabled = false;
+            //    _agent.enabled = true;
+            //    MoveToTarget(_player);
+            //}
+            //else
+            //{
+            //    _agent.enabled = false;
+            //    _agentObstacle.enabled = true;
+            //}
+            if (_enemySoundProvider.CurrentState != (SoundProviderStatesEnum)actionId)
+                _enemySoundProvider.PlaySound(actionId);
+        }
+    }
+
     private void Awake()
     {
+        _agentObstacle = GetComponent<NavMeshObstacle>();
+        _enemyAnimationDataProvider = GetComponent<IAnimationDataProvider>();
+        _enemySoundProvider = GetComponent<ISoundProvider>();
         _agent = GetComponent<NavMeshAgent>();
         PlayerCamera = _player.GetComponent<HVRPlayerController>().Camera;
     }
@@ -87,6 +144,8 @@ public class EnemyController : HVRDamageHandlerBase
     private void Start()
     {
         _currentHealth = health;
+        MoveToTarget(_player);
+        //DoAction(WALK);
     }
 
     private void Update()
@@ -96,18 +155,23 @@ public class EnemyController : HVRDamageHandlerBase
 
     private void FixedUpdate()
     {
-        if (ThereIsATarget())
+        if (!ThereIsATarget())
+            return;
+
+        if (CanAttack())
         {
-            if (CanAttack())
-            {
-                StopMoving();
-                _player.TakeDamage(damage);
-            }
+            DoAction(ATTACK);
+            _player.TakeDamage(damage);
+            return;
+        }
+        else
+        {
+            if (_enemyAnimationDataProvider.CurrentState == IDLE)
+                DoAction(IDLE);
             else
-            {
-                MoveToTarget(_player);
-            }
+                if (!_agent.hasPath)
+                    DoAction(IDLE);
+                DoAction(WALK);
         }
     }
-
 }

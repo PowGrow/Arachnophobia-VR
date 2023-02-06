@@ -4,6 +4,10 @@ using Zenject;
 public class SceneInstaller : MonoInstaller
 {
     [SerializeField]
+    private GameObject playerPrefab;
+    [SerializeField]
+    private Transform startPosition;
+    [SerializeField]
     private GameObject pistolPrefab;
     [SerializeField]
     private GameObject spawnPointsPrefab;
@@ -16,6 +20,9 @@ public class SceneInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
+        var player = Container.InstantiatePrefabForComponent<PlayerData>(playerPrefab, startPosition.position, Quaternion.identity, null);
+        Container.Bind<PlayerData>().FromInstance(player).AsSingle();
+
         PistolBase pistol = Container.InstantiatePrefabForComponent<PistolBase>(pistolPrefab, pistolPosition.position, pistolPosition.rotation, null);
         SpawnPoints spawnPoints = Container.InstantiatePrefabForComponent<SpawnPoints>(spawnPointsPrefab, Vector3.zero, Quaternion.identity, null);
         Container.Bind<SpawnPoints>().FromInstance(spawnPoints).AsSingle();
