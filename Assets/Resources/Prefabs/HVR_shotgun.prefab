@@ -611,7 +611,6 @@ GameObject:
   - component: {fileID: 1960171858852926659}
   - component: {fileID: 1960171858852926656}
   - component: {fileID: 5301288635795579920}
-  - component: {fileID: 119645876577976530}
   m_Layer: 0
   m_Name: HVR_shotgun
   m_TagString: Untagged
@@ -912,18 +911,6 @@ MonoBehaviour:
   Tags:
     Tags: {fileID: 11400000, guid: 0e83bcde818c784468e6c9a69d44702f, type: 2}
     _data: 1
---- !u!114 &119645876577976530
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1960171858852926657}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4664d551a8501c04db3a1a81f3b08f82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1960171858927020843
 GameObject:
   m_ObjectHideFlags: 0

@@ -2298,7 +2298,6 @@ GameObject:
   - component: {fileID: 3837020209686055078}
   - component: {fileID: 5765205463958863642}
   - component: {fileID: 7429851040125204272}
-  - component: {fileID: 1855018839872321321}
   m_Layer: 0
   m_Name: HVR_smg
   m_TagString: Untagged
@@ -2445,7 +2444,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f9db1f9e84328a44ae9e19e161049a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Damage: 25
+  Damage: 5
   Force: 10
   TriggerPullThreshold: 0.7
   TriggerResetThreshold: 0.6
@@ -2604,18 +2603,6 @@ MonoBehaviour:
   Data: {fileID: 0}
   Force: 0
   Grabbable: {fileID: 0}
---- !u!114 &1855018839872321321
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6712261133063922397}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6a10c80802f58a4b9c012d7eb333a1e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8852855347965053162
 GameObject:
   m_ObjectHideFlags: 0
