@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using Zenject;
 using System;
+using Zenject.SpaceFighter;
+using System.Collections.Generic;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -22,29 +24,48 @@ public class EnemySpawner : MonoBehaviour
     private float enemyBaseSpeed;
     [SerializeField]
     private float enemySpeedDelta;
+    [SerializeField]
+    private float enemyDamageDelta;
+    [SerializeField]
+    private float enemyHealthDelta;
 
-
-    private SpawnPoints _spawnPoints;
-    private int currentEnemyCount = 0;
     private DiContainer _diContainer;
+    private SpawnPoints _spawnPoints;
+    private int _currentEnemyCount = 0;
     private int _currentWaveIndex = 1;
     private int _currentWaveEnemyCount;
     private float _currentEnemySpawnDelay;
     private int _enemyKilledOnCurrentWave;
     private float _currentEnemySpeed;
+    private float _currentEnemyDamageDelta;
+    private float _curerentEnemyHealthDelta;
+    private bool _isGameOver = false;
+    private PlayerData _player;
+    private List<EnemyController> ActiveEnemies;
 
-    public Action<int> OnWaveChangingEvent;
-
+    public event Action<int> OnWaveChangingEvent;
+    public event Action OnEnemyKilledEvent;
     [Inject]
-    public void Construct(SpawnPoints spawnPoints,DiContainer diContainer)
+    public void Construct(SpawnPoints spawnPoints,DiContainer diContainer,PlayerData player)
     {
         _spawnPoints = spawnPoints;
         _diContainer = diContainer;
+        _player = player;
+        
+    }
+
+    private void StopSpawnAndKillEnemies()
+    {
+        _isGameOver = true;
+        KillAllActiveEnemies();
+        _player.OnPlayerDieEvent -= StopSpawnAndKillEnemies;
     }
 
     private IEnumerator TryToSpawnEnemy(GameObject enemyPrefab,float delay)
     {
-        if (currentEnemyCount < enemyCountOnScene && _spawnPoints != null)
+        if (_isGameOver)
+            yield return null;
+        if (_currentEnemyCount < enemyCountOnScene && _spawnPoints != null)
             SpawnEnemy(enemyPrefab);
         yield return new WaitForSeconds(delay);
         StartCoroutine(TryToSpawnEnemy(enemyPrefab, _currentEnemySpawnDelay));
@@ -54,9 +75,11 @@ public class EnemySpawner : MonoBehaviour
     {
         var randomSpawnPointIndex = UnityEngine.Random.Range(0, _spawnPoints.Points.Count);
         var enemy = _diContainer.InstantiatePrefabForComponent<EnemyController>(enemyPrefab, _spawnPoints.Points[randomSpawnPointIndex].transform.position, Quaternion.identity, null);
+        ActiveEnemies.Add(enemy);
         enemy.GetComponent<NavMeshAgent>().speed = _currentEnemySpeed;
+        enemy.Mutate(enemyDamageDelta, enemyHealthDelta);
         enemy.OnEnemyDieEvent += EnemyKilledEventHandler;
-        currentEnemyCount++;
+        _currentEnemyCount++;
     }
 
     private void TryToChangeWave(int currentEnemyKilled, int currentWaveEnemyCount)
@@ -75,18 +98,37 @@ public class EnemySpawner : MonoBehaviour
         _currentEnemySpeed = enemySpeedDelta * waveIndex + enemyBaseSpeed;
         _currentWaveEnemyCount = enemyCountDelta * waveIndex + enemyStartCount;
         _currentEnemySpawnDelay = enemySpawnDelayDelta * waveIndex + enemySpawnDelayDelta;
+        _currentEnemyDamageDelta = enemyDamageDelta * waveIndex;
+        _curerentEnemyHealthDelta = enemyHealthDelta * waveIndex;
+        _enemyKilledOnCurrentWave = 0;
 
+    }
+
+    private void KillAllActiveEnemies()
+    {
+        for(int i = ActiveEnemies.Count - 1; i >= 0; i--)
+        {
+            ActiveEnemies[i].Kill();
+        }
     }
 
     private void EnemyKilledEventHandler(EnemyController enemyController)
     {
+        if(!_isGameOver)
+        {
+            _currentEnemyCount--;
+            OnEnemyKilledEvent?.Invoke();
+            _enemyKilledOnCurrentWave++;
+            TryToChangeWave(_enemyKilledOnCurrentWave, _currentWaveEnemyCount);
+        }
+        ActiveEnemies.Remove(enemyController);
         enemyController.OnEnemyDieEvent -= EnemyKilledEventHandler;
-        _enemyKilledOnCurrentWave++;
-        TryToChangeWave(_enemyKilledOnCurrentWave, _currentWaveEnemyCount);
     }
 
     private void Awake()
     {
+        ActiveEnemies = new List<EnemyController>();
+        _player.OnPlayerDieEvent += StopSpawnAndKillEnemies;
         ChangeWaveByIndex(_currentWaveIndex);
         _enemyKilledOnCurrentWave = 0;
         StartCoroutine(TryToSpawnEnemy(enemyPrefab, enemySpawnDelay));

@@ -39,7 +39,6 @@ public class EnemyAnimationDataProvider : MonoBehaviour, IAnimationDataProvider
             _animator.SetBool("IsAttacking", false);
         }
 
-        Debug.Log("VelocityX = " + _agent.velocity.x);
         if (Mathf.Abs(_agent.velocity.x) <= 0.08 && Mathf.Abs(_agent.velocity.y) <= 0.08)
         {
             CurrentState = SoundProviderStatesEnum.Idle;

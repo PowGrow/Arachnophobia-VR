@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Image))]
-public class PlayerHpUi : MonoBehaviour
+public class PlayerHpUI : MonoBehaviour
 {
     [SerializeField]
     private GameUI gameUi;

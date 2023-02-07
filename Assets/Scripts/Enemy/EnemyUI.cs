@@ -6,7 +6,6 @@ public class EnemyUI : MonoBehaviour
     [SerializeField]
     private Image healthUi;
     private Transform _playerCameraTransform;
-    private PlayerData _player;
 
 
     public void UpdateUI(float currentHealth, float maxHealth)

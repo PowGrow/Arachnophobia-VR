@@ -15,6 +15,6 @@ public class MenuInstaller : MonoInstaller
         var player = Container.InstantiatePrefabForComponent<PlayerData>(playerPrefab, startPosition.position, Quaternion.identity, null);
         Container.Bind<PlayerData>().FromInstance(player).AsSingle();
 
-        Container.InstantiatePrefabForComponent<MainMenuUi>(startGameUi);
+        Container.InstantiatePrefabForComponent<MainMenuUI>(startGameUi);
     }
 }

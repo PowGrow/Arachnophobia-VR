@@ -20,6 +20,8 @@ public class EnemyController : HVRDamageHandlerBase
     private float health;
     [SerializeField]
     private EnemyUI enemyUi;
+    [SerializeField]
+    private ParticleSystem enemyDamageParticle;
 
     private IAnimationDataProvider _enemyAnimationDataProvider;
     private ISoundProvider _enemySoundProvider;
@@ -40,16 +42,24 @@ public class EnemyController : HVRDamageHandlerBase
 
     public event Action<EnemyController> OnEnemyDieEvent;
 
+
+
+    [Inject]
+    public void Construct(PlayerData player)
+    {
+        _player = player;
+    }
+
     [ContextMenu("Kill")]
     public void Kill()
     {
         StartCoroutine(Die());
     }
 
-    [Inject]
-    public void Construct(PlayerData player)
+    [ContextMenu("Damage")]
+    public void Damage()
     {
-        _player = player;
+        TakeDamage(5);
     }
 
     private bool CanAttack()
@@ -74,11 +84,6 @@ public class EnemyController : HVRDamageHandlerBase
         }
     }
 
-    private void StopMoving()
-    {
-        _agent.SetDestination(transform.position);
-    }
-
     private bool ThereIsATarget()
     {
         if (_player != null)
@@ -88,6 +93,7 @@ public class EnemyController : HVRDamageHandlerBase
 
     public override void TakeDamage(float value)
     {
+        enemyDamageParticle.Play();
         _currentHealth -= value;
         enemyUi.UpdateUI(_currentHealth, health);
         if (health <= 0)
@@ -97,7 +103,8 @@ public class EnemyController : HVRDamageHandlerBase
     private IEnumerator Die()
     {
         _agent.enabled = false;
-        DoAction(DIE);
+        if (_player.IsAlive)
+            DoAction(DIE);
         yield return new WaitForSeconds(3);
         OnEnemyDieEvent?.Invoke(this);
         Destroy(gameObject);
@@ -116,20 +123,16 @@ public class EnemyController : HVRDamageHandlerBase
                 _enemyAnimationDataProvider.IsAttacking = false;
                 _enemyAnimationDataProvider.IsAlive = false;
             }
-            //if (actionId == WALK)
-            //{
-            //    _agentObstacle.enabled = false;
-            //    _agent.enabled = true;
-            //    MoveToTarget(_player);
-            //}
-            //else
-            //{
-            //    _agent.enabled = false;
-            //    _agentObstacle.enabled = true;
-            //}
             if (_enemySoundProvider.CurrentState != (SoundProviderStatesEnum)actionId)
                 _enemySoundProvider.PlaySound(actionId);
         }
+    }
+
+    public void Mutate(float damageDelta = 0, float healthDelta = 0)
+    {
+        damage += damageDelta;
+        health += healthDelta;
+        _currentHealth = health;
     }
 
     private void Awake()
@@ -145,7 +148,6 @@ public class EnemyController : HVRDamageHandlerBase
     {
         _currentHealth = health;
         MoveToTarget(_player);
-        //DoAction(WALK);
     }
 
     private void Update()
