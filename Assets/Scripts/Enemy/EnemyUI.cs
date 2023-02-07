@@ -8,6 +8,12 @@ public class EnemyUI : MonoBehaviour
     private Transform _playerCameraTransform;
 
 
+    [ContextMenu("TestUI")]
+    public void TestUI()
+    {
+        healthUi.fillAmount = 50f / 100f;
+        Debug.Log(healthUi.fillAmount);
+    }
     public void UpdateUI(float currentHealth, float maxHealth)
     {
         healthUi.fillAmount = currentHealth / maxHealth;
