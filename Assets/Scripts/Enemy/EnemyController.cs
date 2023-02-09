@@ -28,7 +28,6 @@ public class EnemyController : HVRDamageHandlerBase
 
 
     private NavMeshAgent _agent;
-    private NavMeshObstacle _agentObstacle;
     private PlayerData _player;
     private float _attackTimer;
     private float _currentHealth;
@@ -84,11 +83,11 @@ public class EnemyController : HVRDamageHandlerBase
         }
     }
 
-    private bool ThereIsATarget()
+    private bool ThereIsNoTarget()
     {
         if (_player != null)
-            return true;
-        return false;
+            return false;
+        return true;
     }
 
     public override void TakeDamage(float value)
@@ -137,7 +136,6 @@ public class EnemyController : HVRDamageHandlerBase
 
     private void Awake()
     {
-        _agentObstacle = GetComponent<NavMeshObstacle>();
         _enemyAnimationDataProvider = GetComponent<IAnimationDataProvider>();
         _enemySoundProvider = GetComponent<ISoundProvider>();
         _agent = GetComponent<NavMeshAgent>();
@@ -157,7 +155,7 @@ public class EnemyController : HVRDamageHandlerBase
 
     private void FixedUpdate()
     {
-        if (!ThereIsATarget())
+        if (ThereIsNoTarget())
             return;
 
         if (CanAttack())

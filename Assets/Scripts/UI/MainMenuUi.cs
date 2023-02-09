@@ -17,13 +17,13 @@ public class MainMenuUI : MonoBehaviour
         _player = player;
     }
 
-    [ContextMenu("StartGame")]
-    public void StartGame()
+    
+    public void OnStartButtonPress()
     {
         SceneManager.LoadSceneAsync(sceneName);
     }
 
-    public void ExitGame()
+    public void OnExitButtonPress()
     {
         Application.Quit();
     }
