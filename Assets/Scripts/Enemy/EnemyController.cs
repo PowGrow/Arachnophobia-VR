@@ -101,7 +101,7 @@ public class EnemyController : HVRDamageHandlerBase
         enemyDamageParticle.Play();
         _currentHealth -= value;
         enemyUi.UpdateUI(_currentHealth, health);
-        if (health <= 0)
+        if (_currentHealth <= 0)
             StartCoroutine(Die());
     }
 

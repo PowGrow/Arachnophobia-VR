@@ -845,6 +845,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1404b655dd315174585fb4dfb5c6384f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 7672478116835658939, guid: 86289f3e0e6a8024c80df8c9955c88a7, type: 3}
+  playerPrefab: {fileID: 3924027509722682562, guid: 9c1a994e08e69914aa8e74cac5c8dd87, type: 3}
   startPosition: {fileID: 4485123268623746456, guid: e34add25c1a196b4da29280238346e68, type: 3}
   startGameUi: {fileID: 3128041584992149191, guid: dec552ce9fc2e6541b90d73d0c7d86db, type: 3}
