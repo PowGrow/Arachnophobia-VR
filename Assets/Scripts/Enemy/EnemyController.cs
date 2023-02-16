@@ -22,6 +22,10 @@ public class EnemyController : HVRDamageHandlerBase
     private EnemyUI enemyUi;
     [SerializeField]
     private ParticleSystem enemyDamageParticle;
+    [SerializeField]
+    private float healingSphereDropRate = 50;
+    [SerializeField]
+    private GameObject healingSpherePrefab;
 
     private IAnimationDataProvider _enemyAnimationDataProvider;
     private ISoundProvider _enemySoundProvider;
@@ -29,6 +33,7 @@ public class EnemyController : HVRDamageHandlerBase
 
     private NavMeshAgent _agent;
     private PlayerData _player;
+    private DiContainer _container;
     private float _attackTimer;
     private float _currentHealth;
 
@@ -44,8 +49,9 @@ public class EnemyController : HVRDamageHandlerBase
 
 
     [Inject]
-    public void Construct(PlayerData player)
+    public void Construct(DiContainer container, PlayerData player)
     {
+        _container = container;
         _player = player;
     }
 
@@ -105,8 +111,18 @@ public class EnemyController : HVRDamageHandlerBase
         if (_player.IsAlive)
             DoAction(DIE);
         yield return new WaitForSeconds(3);
+        TryToDropHealingSphere(healingSphereDropRate, healingSpherePrefab);
         OnEnemyDieEvent?.Invoke(this);
         Destroy(gameObject);
+    }
+
+    private void TryToDropHealingSphere(float dropRate,GameObject spherePrefab)
+    {
+        var random = UnityEngine.Random.Range(0, 100);
+        if(random >= dropRate)
+        {
+            _container.InstantiatePrefabForComponent<HealingSphere>(spherePrefab, gameObject.transform.position, Quaternion.identity, null);
+        }
     }
 
     private void DoAction(int actionId)

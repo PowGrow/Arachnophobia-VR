@@ -35,6 +35,11 @@ public class PlayerData : MonoBehaviour
             StartCoroutine(Die(DIE_DELAY));
         }
     }
+
+    public void TakeHealing(float value)
+    {
+        Health += value;
+    }
     private IEnumerator Die(float delay)
     {
         Health = 0;

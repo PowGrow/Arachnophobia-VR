@@ -16353,7 +16353,7 @@ Transform:
   m_GameObject: {fileID: 5817240879092078873}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7027373136443501582}
@@ -16404,6 +16404,8 @@ MonoBehaviour:
   health: 30
   enemyUi: {fileID: 3455505441625203125}
   enemyDamageParticle: {fileID: 1804460729986684851}
+  healingSphereDropRate: 50
+  healingSpherePrefab: {fileID: 9211939758448516858, guid: 566ac55327c94cf43a70c90aeef8fcdf, type: 3}
 --- !u!114 &6976859385090772709
 MonoBehaviour:
   m_ObjectHideFlags: 0
